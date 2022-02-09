@@ -63,3 +63,11 @@ def db_summary(request):
     list_of_values, ctx_dates, table_most_exp, table_cheapests = build_db_summary_context()
 
     return render(request, 'template_database.html', {"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})
+
+def training_reports(request):
+
+    return render(request, 'template_training.html')
+
+def about(request):
+
+    return render(request, 'template_about.html')

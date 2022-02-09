@@ -4,14 +4,14 @@
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-    <h1>Pegaso</h1>
+    <h1 style="text-align:center">Pegaso</h1>
 
-    <h3>A fullstack data centric software project</h3>
+    <h3 style="text-align:center">A fullstack data centric software project</h3>
 
     {% include "above/navbar.html" %}
 
     {% block content %} {% endblock %}
 
-    <p>By Pedro Fernández Soler. This website is developed using Django Python framework. Source <a href="https://github.com/peferso/pegaso-website">code</a>. </p>
+    <p style="text-align:right">By Pedro Fernández Soler. This website is developed using Django Python framework. Source <a href="https://github.com/peferso/pegaso-website">code</a>. </p>
 </body>
 </html>
