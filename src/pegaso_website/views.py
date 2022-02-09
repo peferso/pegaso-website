@@ -5,6 +5,7 @@ import pymysql
 import datetime
 import pandas as pd
 from django.template import loader
+from django.shortcuts import render
 
 
 def home_page(request):
@@ -59,22 +60,6 @@ def build_db_summary_context():
 
 def db_summary(request):
 
-    #PROJECT_PATH = os.environ['PEGASO_WEBST_DIR']
-
-    #template = open(PROJECT_PATH + "/src/pegaso_website/templates/template_1.html")
-
-    #plt = Template(template.read())
-
-    #template.close()
-
     list_of_values, ctx_dates, table_most_exp, table_cheapests = build_db_summary_context()
 
-    #ctx = Context({"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})
-
-    doc_externo = loader.get_template('template_1.html')
-
-    doc = doc_externo.render({"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})
-
-    #doc = plt.render(ctx)
-
-    return HttpResponse(doc)
+    return render(request, 'template_1.html', {"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})

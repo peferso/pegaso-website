@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+
+    {% include "above/navbar.html" %}
+
+    <h1>Pegaso</h1>
+
+    <h3>A fullstack data centric software project</h3>
+
+    {% block content%} {% endblock %}
+
+    <p>By Pedro Fernández Soler</p>
+</body>
+</html>
