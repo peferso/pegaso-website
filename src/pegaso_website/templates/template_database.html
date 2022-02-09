@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>pegaso | A fullstack data science project</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-{% include "above/navbar.html" %}
+{% block title %} pegaso | A fullstack data science project {% endblock %}
 
-<h1>Data base summary</h1>
+{% block content %}
+
+<h2>Data base summary</h2>
 <p>
     The Pegaso project aims to provide a theoretical and quantitative sound estimation of car prices based on data.
 </p>
@@ -24,16 +20,16 @@
 <p>
     After each load the data is used to retrain a machine learning model to estimate car prices.
 </p>
-<h2>High level information</h2>
-<h3>Most recent data load was performed on {{last_update_date.0}} (previous on {{last_update_date.1}})</h3>
+<h3>High level information</h3>
+<h4>Most recent data load was performed on {{last_update_date.0}} (previous on {{last_update_date.1}})</h4>
 <p>The total number of cars in the database is {{list.0}}.</p>
 
 <p>The number of cars added to the database in the current week is {{list.3}}</p>
 
 <p>The number of cars added to the database during the past week is {{list.6}}</p>
 
-<h2>More information</h2>
-<h3>Top ten most expensive cars this week</h3>
+<h3>More information</h3>
+<h4>Top ten most expensive cars this week</h4>
 
 <table>
   <tr>
@@ -54,7 +50,7 @@
     {% endfor %}
 </table>
 
-<h3>Top ten cheapest cars this week</h3>
+<h4>Top ten cheapest cars this week</h4>
 
 <table>
   <tr>
@@ -75,5 +71,4 @@
     {% endfor %}
 </table>
 
-</body>
-</html>
+{% endblock %}

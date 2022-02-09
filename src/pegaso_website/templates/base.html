@@ -1,17 +1,17 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-
-    {% include "above/navbar.html" %}
-
     <h1>Pegaso</h1>
 
     <h3>A fullstack data centric software project</h3>
 
-    {% block content%} {% endblock %}
+    {% include "above/navbar.html" %}
 
-    <p>By Pedro Fernández Soler</p>
+    {% block content %} {% endblock %}
+
+    <p>By Pedro Fernández Soler. This website is developed using Django Python framework. Source <a href="https://github.com/peferso/pegaso-website">code</a>. </p>
 </body>
 </html>

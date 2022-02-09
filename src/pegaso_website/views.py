@@ -8,10 +8,6 @@ from django.template import loader
 from django.shortcuts import render
 
 
-def home_page(request):
-
-    return HttpResponse("Holaa")
-
 def build_db_summary_context():
     connection = pymysql.connect(host=os.environ['DBHOST'],
                                  user=os.environ['DBUSER'],
@@ -58,8 +54,12 @@ def build_db_summary_context():
     con_cursor.close()
     return ctx_vals, ctx_dates, dfex, dfch
 
+def home_page(request):
+
+    return render(request, 'template_home.html')
+
 def db_summary(request):
 
     list_of_values, ctx_dates, table_most_exp, table_cheapests = build_db_summary_context()
 
-    return render(request, 'template_1.html', {"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})
+    return render(request, 'template_database.html', {"list": list_of_values, "last_update_date": ctx_dates, "top_ten_expensive": table_most_exp,  "top_ten_cheapests": table_cheapests})
