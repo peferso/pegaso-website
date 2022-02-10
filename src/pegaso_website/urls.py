@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from pegaso_website.views import home_page, db_summary, about, training_reports
+from pegaso_website.views import home_page, db_summary, about, training_reports, results
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', home_page),
+    path('results/', results),
     path('dbsummary/', db_summary),
     path('about/', about),
     path('training-reports/', training_reports)

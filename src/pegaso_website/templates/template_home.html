@@ -5,5 +5,40 @@
 {% block content %}
 <h2>Home</h2>
 
+<p>Hello my friend! Welcome to the main page of Pegaso project.</p>
+
+<p>Here you will be able to predict the price of a car based on:</p>
+        <ul>
+            <li>The <strong>brand</strong>: select one of the brands available (only those with more than 100 elements in the database are shown).
+                As long as the number of elements in the database keeps growing there will be more options available.</li>
+            <li>The number of <strong>kilometers</strong>.</li>
+            <li>The <strong>year</strong> of the car.</li>
+            <li>The <strong>power</strong> in units of CV (1 CV=0.986 HP).</li>
+        </ul>
+
+<h2>How much?!</h2>
+
+    <p>
+      <form action="/results/" method="GET">
+         <label for="brandcontainer" >Brand:</label>
+         <select name = "br" id="brandcontainer">
+             {% for opt in brandsList %}
+                <option name="{{opt}}">{{opt}}</option>
+             {% endfor %}
+         </select>
+        <label for="kilometers">Kilometers:</label>
+        <input id="kilometers" name="km" type="number" value="10000" step="1000">
+        <label for="year">Year:</label>
+         <select name = "yr" id="year">
+             {% for y in yearsList %}
+                <option name="{{y}}">{{y}}</option>
+             {% endfor %}
+         </select>
+        <label for="power">Power:</label>
+        <input id="power" name="pw" type="number" value="100"  step="10">
+        <input id="sendinfo" type="submit" value="Send"/>
+      </form>
+    </p>
+
 
 {% endblock %}

@@ -6,7 +6,7 @@ import datetime
 import pandas as pd
 from django.template import loader
 from django.shortcuts import render
-
+from pegaso_website.models.random_forest import random_forest
 
 def build_db_summary_context():
     connection = pymysql.connect(host=os.environ['DBHOST'],
@@ -54,9 +54,23 @@ def build_db_summary_context():
     con_cursor.close()
     return ctx_vals, ctx_dates, dfex, dfch
 
+def get_brands():
+    connection = pymysql.connect(host=os.environ['DBHOST'],
+                                 user=os.environ['DBUSER'],
+                                 passwd=os.environ['DBPASS'],
+                                 db="pegaso_db",
+                                 charset='utf8')
+    sql_query = pd.read_sql_query('select brand from brands_count where num_cars>100;', connection)
+    dfex = pd.DataFrame(sql_query, columns=['brand'])
+    brands_list = dfex['brand'].tolist()
+    brands_list = sorted(brands_list)
+    return brands_list
+
 def home_page(request):
 
-    return render(request, 'template_home.html')
+    brands_list = get_brands()
+
+    return render(request, 'template_home.html', {'brandsList': brands_list, 'yearsList': range(int(datetime.date.today().strftime("%Y")), 1900, -1)})
 
 def db_summary(request):
 
@@ -71,3 +85,21 @@ def training_reports(request):
 def about(request):
 
     return render(request, 'template_about.html')
+
+def results(request):
+
+    input_brand = request.GET['br']
+    input_klmts = request.GET['km']
+    input_power = request.GET['pw']
+    input_yyear = request.GET['yr']
+
+    input_parms = {
+        "Brand": input_brand,
+        "Kilometers": input_klmts,
+        "Power": input_power,
+        "Year": input_yyear
+        }
+
+    price = random_forest(input_parms)
+
+    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price})
