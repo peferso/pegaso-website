@@ -91,15 +91,17 @@ def results(request):
     input_brand = request.GET['br']
     input_klmts = request.GET['km']
     input_power = request.GET['pw']
+    input_doors = request.GET['dr']
     input_yyear = request.GET['yr']
 
     input_parms = {
-        "Brand": input_brand,
-        "Kilometers": input_klmts,
-        "Power": input_power,
-        "Year": input_yyear
+        "brand": input_brand,
+        "kilometers": input_klmts,
+        "power": input_power,
+        "doors": input_doors,
+        "years": datetime.datetime.now().date().year - int(input_yyear)
         }
 
-    price = random_forest(input_parms)
+    price, chart = random_forest(input_parms)
 
-    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price})
+    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'chart': chart})

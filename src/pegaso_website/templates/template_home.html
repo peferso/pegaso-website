@@ -20,22 +20,35 @@
 
     <p>
       <form action="/results/" method="GET">
+
          <label for="brandcontainer" >Brand:</label>
          <select name = "br" id="brandcontainer">
              {% for opt in brandsList %}
                 <option name="{{opt}}">{{opt}}</option>
              {% endfor %}
          </select>
+
         <label for="kilometers">Kilometers:</label>
         <input id="kilometers" name="km" type="number" value="10000" step="1000">
+
         <label for="year">Year:</label>
          <select name = "yr" id="year">
              {% for y in yearsList %}
                 <option name="{{y}}">{{y}}</option>
              {% endfor %}
          </select>
+
+        <label for="doors">Doors:</label>
+         <select name = "dr" id="doors">
+                <option name="2">2</option>
+                <option name="2">3</option>
+                <option name="2">4</option>
+                <option name="2">5</option>
+         </select>
+
         <label for="power">Power:</label>
-        <input id="power" name="pw" type="number" value="100"  step="10">
+        <input id="power" name="pw" type="number" value="100"  step="1">
+
         <input id="sendinfo" type="submit" value="Send"/>
       </form>
     </p>

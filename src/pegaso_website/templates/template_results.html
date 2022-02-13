@@ -17,5 +17,10 @@
         {% endfor %}
         </ul>
 
-<p>Price predicted: {{pricePred}} Euros</p>
+    <p>Price predicted: {{pricePred}} Euros</p>
+    <p>Prices predicted for the next 10 years:</p>
+
+    {{chart|safe}}
+        <img src="data:image/png;base64, {{ chart|safe }}" />
+
 {% endblock %}

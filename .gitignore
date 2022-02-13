@@ -1,5 +1,6 @@
 .idea
 .idea/*
+*.joblib
 
 
 # Byte-compiled / optimized / DLL files
