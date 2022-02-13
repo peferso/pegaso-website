@@ -18,9 +18,8 @@
         </ul>
 
     <p>Price predicted: {{pricePred}} Euros</p>
-    <p>Prices predicted for the next 10 years:</p>
+    <p>Prices predicted for the next 10 years: {{prices}}</p>
 
-    {{chart|safe}}
-        <img src="data:image/png;base64, {{ chart|safe }}" />
+        <img src="data:image/png;base64,{{chart}}" >
 
 {% endblock %}

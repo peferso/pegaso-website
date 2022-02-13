@@ -99,9 +99,9 @@ def results(request):
         "kilometers": input_klmts,
         "power": input_power,
         "doors": input_doors,
-        "years": datetime.datetime.now().date().year - int(input_yyear)
+        "age": datetime.datetime.now().date().year - int(input_yyear)
         }
 
-    price, chart = random_forest(input_parms)
+    price, prices, chart = random_forest(input_parms)
 
-    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'chart': chart})
+    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'prices': prices, 'chart': chart})

@@ -1,11 +1,10 @@
 import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-import joblib
+import os
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
-
+import requests
+import urllib
 
 def random_forest(params):
 
@@ -13,53 +12,42 @@ def random_forest(params):
     kms = params["kilometers"]
     pwr = params["power"]
     dor = params["doors"]
-    yyr = params["years"]
+    yyr = params["age"]
 
-    features_labels = ['kilometers', 'power', 'doors', 'years', 'brand_AUDI', 'brand_BMW', 'brand_CITROEN', 'brand_FIAT', 'brand_FORD',
-     'brand_HYUNDAI', 'brand_JAGUAR', 'brand_KIA', 'brand_LANDROVER', 'brand_MAZDA', 'brand_MERCEDES', 'brand_MINI',
-     'brand_NISSAN', 'brand_OPEL', 'brand_PEUGEOT', 'brand_PORSCHE', 'brand_RENAULT', 'brand_SEAT', 'brand_SKODA',
-     'brand_SMART', 'brand_TOYOTA', 'brand_VOLKSWAGEN', 'brand_VOLVO']
+    API_ENDPOINT = os.environ['RF_API_ENDPOINT']
 
-    values = []
+    response_API = requests.get('http://' +
+                                API_ENDPOINT +
+                                '/predict_rf/' +
+                                str(brd) + '/' +
+                                str(kms) + '/' +
+                                str(pwr) + '/' +
+                                str(dor) + '/' +
+                                str(yyr)
+                                )
 
-    for col in features_labels:
-        if col.split('_')[0] == 'brand' and col.split('_')[1] == params['brand']:
-            values.append(1)
-        elif col.split('_')[0] == 'brand' and col.split('_')[1] != params['brand']:
-            values.append(0)
-        else:
-            values.append(params[col])
+    price = round(float(response_API.text), 2)
 
-    X = np.array(values)
-    X = X.reshape(1, -1)
-    rf = joblib.load("pegaso_website/models/rf_2022-02-12_22-41-03312819.joblib")
-
-    price = rf.predict(X)
-    price = round(price[0], 2)
-
-    params_2 = params
-    rows = []
-    for years in range(yyr, yyr + 11):
-        values = []
-        params_2["years"] = years
-        params_2["kilometers"] = int(params_2["kilometers"]) + int(params["kilometers"])/(max(int(params["years"]), 1))
-        for col in features_labels:
-            if col.split('_')[0] == 'brand' and col.split('_')[1] == params_2['brand']:
-                values.append(1)
-            elif col.split('_')[0] == 'brand' and col.split('_')[1] != params_2['brand']:
-                values.append(0)
-            else:
-                values.append(params_2[col])
-        rows.append(values)
-
-    X = np.array(rows)
-
-    prices = rf.predict(X)
+    prices = []
+    for i in range(yyr, yyr + 11):
+        kms_f = int(kms) + int(kms)/max(yyr, 1) * yyr
+        yyr_f = i
+        response_API = requests.get('http://' +
+                                    API_ENDPOINT +
+                                    '/predict_rf/' +
+                                    str(brd) + '/' +
+                                    str(int(kms_f)) + '/' +
+                                    str(pwr) + '/' +
+                                    str(dor) + '/' +
+                                    str(yyr_f)
+                                    )
+        prices.append(round(float(response_API.text), 2))
 
     years = [y for y in range(yyr, yyr + 11)]
+
     chart = get_plot(years, prices)
 
-    return price, chart
+    return price, prices, chart
 
 def get_graph():
     buffer = BytesIO()
@@ -67,17 +55,32 @@ def get_graph():
     buffer.seek(0)
     image_png = buffer.getvalue()
     graph = base64.b64decode(image_png)
-    graph = graph.decode('utf-8')
+    graph = graph.decode('utf8')
     buffer.close()
     return graph
 
 def get_plot(x,y):
+    '''
+    #graph = get_graph()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64decode(image_png)
+    graph = graph.decode('utf8')
+    buffer.close()
+    '''
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 6))
     plt.title('Future price estimation in the following years at a similar km per year rate')
     plt.plot(x, y)
-    plt.xlabel('Year')
-    plt.ylabel('Price in Euros')
+    plt.xlabel('Age (years)')
+    plt.ylabel('Price (Euros)')
     plt.tight_layout()
-    graph = get_graph()
+    fig = plt.gcf()
+    buf = BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    graph = urllib.parse.quote(string)
     return graph
