@@ -10,9 +10,11 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
 
-                source ../bin/activate
+                source bin/activate
 
-                pip install
+                pip install -r requirements.txt
+
+                cd src
 
                 python manage.py runserver
 
