@@ -6,6 +6,15 @@ pipeline {
     }
     stages {
 
+        stage('Install pip in jenkins env') {
+            steps {
+            sh '''#!/bin/bash
+            curl -O https://bootstrap.pypa.io/get-pip.py
+             python3 get-pip.py --user
+            '''
+            }
+        }
+
         stage('Activate environment') {
             steps {
                 sh '''#!/bin/bash
@@ -16,7 +25,7 @@ pipeline {
         stage('Update packages') {
             steps {
                 sh '''#!/bin/bash
-                pip install -r requirements.txt
+                /var/lib/jenkins/.local/bin/pip install -r requirements.txt
                 '''
             }
         }
