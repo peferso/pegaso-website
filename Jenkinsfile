@@ -12,6 +12,8 @@ pipeline {
 
                 source ../bin/activate
 
+                pip install
+
                 python manage.py runserver
 
                 '''
