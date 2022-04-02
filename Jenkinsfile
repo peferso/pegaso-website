@@ -8,13 +8,12 @@ pipeline {
 
         stage('Install pip in jenkins env') {
             steps {
-            sh '''#!/bin/bash
-            curl -O https://bootstrap.pypa.io/get-pip.py
-             python3 get-pip.py --user
-            '''
+               sh '''#!/bin/bash
+                curl -O https://bootstrap.pypa.io/get-pip.py
+                python3 get-pip.py --user
+                '''
             }
         }
-
         stage('Activate environment') {
             steps {
                 sh '''#!/bin/bash
@@ -33,7 +32,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                 cd src
-                python manage.py runserver
+                #python manage.py runserver &
                 '''
             }
         }
