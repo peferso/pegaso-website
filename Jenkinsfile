@@ -9,17 +9,22 @@ pipeline {
         stage('Start website') {
             steps {
                 sh '''#!/bin/bash
-
                 source bin/activate
-
-                pip install -r requirements.txt
-
-                cd src
-
-                python manage.py runserver
-
                 '''
             }
+            steps {
+                sh '''#!/bin/bash
+                pip install -r requirements.txt
+                '''
+            }
+            steps {
+                sh '''#!/bin/bash
+                cd src
+                python manage.py runserver
+                '''
+            }
+
+
         }
     }
 }
