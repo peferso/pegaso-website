@@ -3,9 +3,9 @@ pipeline {
     environment {
         BINDIR = '/var/lib/jenkins/.local/bin'
         SRCDIR = '/home/ec2-user/pegaso-website'
-        DBUSER = '$DBUSER_AWS'
-        DBHOST = '$DBHOST_AWS'
-        DBPASS = '$DBPASS_AWS'
+        DBUSER = '\$DBUSER_AWS'
+        DBHOST = '\$DBHOST_AWS'
+        DBPASS = '\$DBPASS_AWS'
     }
     stages {
         stage('Adapt path to environment') {
