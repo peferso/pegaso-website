@@ -28,10 +28,12 @@ pipeline {
                 '''
             }
         }
-        stage('Start website') {
+        stage('Website deployment configurations') {
             steps {
                 sh '''#!/bin/bash
-                cd src
+                cd src/pegaso_website
+                replace_cmd=s/#HOST#/`curl -s ifconfig.co`/g
+                sed -i "${replace_cmd}"
                 #python manage.py runserver &
                 '''
             }
