@@ -17,7 +17,7 @@ pipeline {
         stage('Adapt path to environment') {
             steps {
                 sh '''#!/bin/bash
-                echo -e "\nAdapting PATH to Jenkins deployment\n" >> bin/activate
+                echo -e "\n# Adapting PATH to Jenkins deployment\n" >> bin/activate
                 echo "export PATH=${HOME}/.local/bin:${PATH#*:}" >> bin/activate
                 '''
             }
