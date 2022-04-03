@@ -2,16 +2,20 @@ pipeline {
     agent any
     environment {
         BINDIR = '/var/lib/jenkins/.local/bin'
-        DBUSER = 'ec2-dbuser'
-        DBHOST = ''
         SRCDIR = '/home/ec2-user/pegaso-website'
+        DBUSER = '$DBUSER_AWS'
+        DBHOST = '$DBHOST_AWS'
+        DBPASS = '$DBPASS_AWS'
     }
     stages {
         stage('Adapt path to environment') {
             steps {
                 sh '''#!/bin/bash
-                echo -e "\n# Adapting PATH in Jenkins deployment\n" >> bin/activate
+                echo -e "\n# Adapting PATH and environment variables in Jenkins deployment\n" >> bin/activate
                 echo "export PATH=${HOME}/.local/bin:${PATH#*:}" >> bin/activate
+                echo "export DBHOST=${DBHOST}" >> bin/activate
+                echo "export DBPASS=${DBPASS}" >> bin/activate
+                echo "export DBUSER=${DBUSER}" >> bin/activate
                 '''
             }
         }
