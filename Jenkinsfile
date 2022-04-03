@@ -21,7 +21,7 @@ pipeline {
                 '''
             }
         }
-        stage('Update packages') {
+        stage('Adapt path to environment') {
             steps {
                 sh '''#!/bin/bash
                 export PATH=${HOME}/.local/bin:${PATH#*:}
