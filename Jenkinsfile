@@ -33,8 +33,8 @@ pipeline {
                 sh '''#!/bin/bash
                 cd src/pegaso_website
                 replace_cmd=s/#HOST#/`curl -s ifconfig.co`/g
-                sed -i "${replace_cmd}"
-                #python manage.py runserver &
+                sed -i "${replace_cmd}" settings.py
+                cd ${OLDPWD}
                 '''
             }
         }
