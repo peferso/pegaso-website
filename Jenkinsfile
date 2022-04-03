@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        TFPROJECTFOLDER = 'terraform-demo'
+        BINDIR = '/var/lib/jenkins/.local/bin'
         TFPROJECTREPO = 'https://github.com/.../terraform-demo.git'
     }
     stages {
@@ -18,6 +18,13 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                 source bin/activate
+                '''
+            }
+        }
+        stage('Update packages') {
+            steps {
+                sh '''#!/bin/bash
+                export PATH=${HOME}/.local/bin:${PATH#*:}
                 '''
             }
         }
