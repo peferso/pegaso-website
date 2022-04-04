@@ -6,6 +6,8 @@ pipeline {
         DBUSER = '\$DBUSER_AWS'
         DBHOST = '\$DBHOST_AWS'
         DBPASS = '\$DBPASS_AWS'
+        APIPRT = '\$APIPRT_AWS'
+        APIEPT = '\$APIEPT_AWS'
     }
     stages {
         stage('Adapt path to environment') {
@@ -16,6 +18,8 @@ pipeline {
                 echo "export DBHOST=${DBHOST}" >> bin/activate
                 echo "export DBPASS=${DBPASS}" >> bin/activate
                 echo "export DBUSER=${DBUSER}" >> bin/activate
+                echo "export RF_API_PORT=${APIPRT}" >> bin/activate
+                echo "export RF_API_ENDPOINT=${APIEPT}" >> bin/activate
                 '''
             }
         }
