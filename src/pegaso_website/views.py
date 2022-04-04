@@ -102,6 +102,6 @@ def results(request):
         "age": datetime.datetime.now().date().year - int(input_yyear)
         }
 
-    price, prices, chart1, chart2 = random_forest(input_parms)
+    price, prices, chart1, chart2, chart3 = random_forest(input_parms)
 
-    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'prices': prices, 'forecast': chart1,  'distr': chart2})
+    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'prices': prices, 'forecast': chart1,  'distr': chart2, 'colplt': chart3})
