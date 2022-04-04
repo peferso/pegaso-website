@@ -3,6 +3,27 @@
 {% block title %} pegaso | A fullstack data science project {% endblock %}
 
 {% block content %}
+
+<style>
+        * {
+        box-sizing: border-box;
+        }
+
+        .column {
+        float: left;
+        width: 49.00%;
+        padding: 5px;
+        }
+
+        /* Clearfix (clear floats) */
+        .row::after {
+        content: "";
+        clear: both;
+        display: table;
+        }
+
+</style>
+
 <h2>Results report {{ts}}</h2>
 
 <p> Received:</p>
@@ -20,6 +41,13 @@
     <p>Price predicted: {{pricePred}} Euros</p>
     <p>Prices predicted for the next 10 years: {{prices}}</p>
 
-        <img src="data:image/png;base64,{{chart}}" >
+    <div class="row">
+        <div class="column">
+            <img src="data:image/png;base64,{{forecast}}" alt="Forecast" style="width:100%">
+        </div>
+        <div class="column">
+            <img src="data:image/png;base64,{{distr}}" alt="Distribution" style="width:100%">
+        </div>
+    </div>
 
 {% endblock %}
