@@ -60,7 +60,7 @@ def get_brands():
                                  passwd=os.environ['DBPASS'],
                                  db="pegaso_db",
                                  charset='utf8')
-    sql_query = pd.read_sql_query('select brand from brands_count where num_cars>100;', connection)
+    sql_query = pd.read_sql_query('select brand from brands_count where num_cars>1000;', connection)
     dfex = pd.DataFrame(sql_query, columns=['brand'])
     brands_list = dfex['brand'].tolist()
     brands_list = sorted(brands_list)
@@ -102,6 +102,15 @@ def results(request):
         "age": datetime.datetime.now().date().year - int(input_yyear)
         }
 
-    price, prices, chart1, chart2, chart3 = random_forest(input_parms)
+    price, prices, chart1, chart2, chart3, chart4, chart5 = random_forest(input_parms)
 
-    return render(request, 'template_results.html', {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"), 'inputParms': input_parms, 'pricePred': price, 'prices': prices, 'forecast': chart1,  'distr': chart2, 'colplt': chart3})
+    return render(request, 'template_results.html',
+                  {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"),
+                   'inputParms': input_parms,
+                   'pricePred': price,
+                   'prices': prices,
+                   'forecast': chart1,
+                   'distr': chart2,
+                   'colplt1': chart3,
+                   'colplt2': chart4,
+                   'colplt3': chart5})
