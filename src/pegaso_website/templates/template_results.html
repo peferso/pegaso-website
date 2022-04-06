@@ -27,19 +27,16 @@
 <h2>Results report {{ts}}</h2>
 
 <p> Received:</p>
-        <ul><!--
-            {% for key, value in inputParams %}
-                <li>{{ key }}: {{ value }}</li>
-            {% endfor %}
-
-        -->
+        <ul>
         {% for key, value in inputParms.items %}
             <li><b>{{key}}</b>: {{value}}</li>
         {% endfor %}
         </ul>
 
     <p>Price predicted: {{pricePred}} Euros</p>
-    <p>Prices predicted for the next 10 years: {{prices}}</p>
+    <p>Mean average error of predicted price for this brand is: {{mae}} </p>
+    <p>Mean average percentage error of predicted price for this brand is: {{mape}} </p>
+    <!--<p>Prices predicted for the next 10 years: {{prices}}</p>-->
 
     <div class="row">
         <div class="column">
@@ -59,6 +56,13 @@
         </div>
     </div>
 
-    <img src="data:image/png;base64,{{colplt3}}" alt="DistributionBrands" style="width:49%">
+   <div class="row">
+        <div class="column">
+            <img src="data:image/png;base64,{{colplt3}}" alt="DistributionBrands" style="width:100%">
+        </div>
+        <div class="column">
+            <img src="data:image/png;base64,{{colplt4}}" alt="DistributionDevaluation" style="width:100%">
+        </div>
+    </div>
 
 {% endblock %}

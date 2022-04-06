@@ -74,7 +74,7 @@ def random_forest(params):
     x = data_colplt_yrs
     y = data_colplt_kms
     z = data_colplt_prc
-    title = 'Price distribution for brand ' + str(brd).capitalize()
+    title = 'Kilometers vs years for brand ' + str(brd).capitalize()
     colplt2 = get_plot_colmap(x, y, z, xl, yl, zl, np.amin(x), np.amax(x), np.amin(y), np.amax(y), title, kms, price)
 
     data_colplt_prc, data_colplt_kms, data_colplt_pwr, data_colplt_yrs, data_colplt_brd = fetch_data_for_colplt_full()
@@ -89,7 +89,63 @@ def random_forest(params):
     title = 'Price distribution among brands'
     colplt3 = get_plot_colmap_categories(x, y, z, c, xl, yl, zl, 0.0, 300000.0, 0.0, 200000.0, title, kms, price)
 
-    return price, prices, forecast, distr, colplt1, colplt2, colplt3
+    mae, mape, pred_devaluations = build_devaluation_pred_data_set(brd)
+
+    distr_dev = get_plot_distr(pred_devaluations,  int(predict(brd, 1, pwr, dor, 0, 'predict_rf') - price), brd)
+
+    return [price, mae, mape], prices, forecast, distr, colplt1, colplt2, colplt3, distr_dev
+
+def get_query_data(query):
+    connection = pymysql.connect(host=os.environ['DBHOST'],
+                                 user=os.environ['DBUSER'],
+                                 passwd=os.environ['DBPASS'],
+                                 db="pegaso_db",
+                                 charset='utf8')
+    con_cursor = connection.cursor()
+    con_cursor.execute(query)
+    output = con_cursor.fetchall()
+    return output
+
+def predict(brd, kms, pwr, dor, yyr, model):
+    API_ENDPOINT = os.environ['RF_API_ENDPOINT']
+    response_API = requests.get('http://' +
+                                API_ENDPOINT +
+                                '/' + str(model) + '/' +
+                                str(brd) + '/' +
+                                str(kms) + '/' +
+                                str(pwr) + '/' +
+                                str(dor) + '/' +
+                                str(yyr)
+                                )
+    price = round(float(response_API.text), 2)
+    return price
+
+def build_devaluation_pred_data_set(brd):
+    output = get_query_data("select rd.price_c, pp.price_pred, pp.price_pred_if_new, pp.batch_ts " +
+                            "from                                   " +
+                            "    raw_data rd,                       " +
+                            "    predicted_prices_random_forest pp " +
+                            "where                                  " +
+                            "    rd.id=pp.id                       " +
+                            "and                                    " +
+                            "    rd.brand='" + str(brd) + "';       ")
+    predictions = []
+    values = []
+    pred_devaluations = []
+    for i in output:
+        prc = i[0]
+        pred_prc = i[1]
+        prc_new = i[2]
+        predictions.append(float(pred_prc))
+        values.append(float(prc))
+        pred_devaluations.append(int(prc_new - prc))
+    predictions = np.array(predictions)
+    values = np.array(values)
+    pred_devaluations = np.array(pred_devaluations)
+    mae = round(np.mean(abs(predictions - values)), 2)
+    mape = round(np.mean(abs((predictions - values)/values * 100.0)), 2)
+    return mae, mape, pred_devaluations
+
 
 def fetch_data_for_distr(brand):
     connection = pymysql.connect(host=os.environ['DBHOST'],
@@ -220,6 +276,7 @@ def get_plot_forecast(x, y, year, price):
     return graph
 
 def get_plot_distr(data, price, brand):
+    plt.close()
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 10))
     plt.tight_layout()
@@ -227,7 +284,7 @@ def get_plot_distr(data, price, brand):
     axs.hist(data, bins=10, edgecolor='k', alpha=0.65)
     plt.title('Price distribution for brand ' + str(brand))
     plt.axvline(price, color='k', linestyle='dashed', linewidth=1)
-    plt.xlabel('Price (Euros)')
+    plt.xlabel('Price devaluation predicted (Euros)')
     plt.ylabel('Frequency')
     fig = plt.gcf()
     buf = BytesIO()
@@ -286,7 +343,6 @@ def get_plot_colmap_categories(x, y, z, cat, xlb, ylb, zlb, x1, x2, y1, y2, titl
     plt.xlabel(xlb)
     plt.xlim([x1, x2])
     plt.ylim([y1, y2])
-    plt.show()
     fig = plt.gcf()
     buf = BytesIO()
     fig.savefig(buf, format='png')
