@@ -57,7 +57,7 @@ def random_forest(params):
 
     data_colplt_prc, data_colplt_kms, data_colplt_pwr, data_colplt_yrs = fetch_data_for_colplt(brd)
 
-    distr = get_plot_distr(data_prices, price, brd)
+    distr = get_plot_distr(data_prices, 'price (Euros)', 'Frequency', 'Distribution for brand ',  price, brd)
 
     xl = 'kilometers'
     yl = 'price (Euros)'
@@ -75,7 +75,7 @@ def random_forest(params):
     y = data_colplt_kms
     z = data_colplt_prc
     title = 'Kilometers vs years for brand ' + str(brd).capitalize()
-    colplt2 = get_plot_colmap(x, y, z, xl, yl, zl, np.amin(x), np.amax(x), np.amin(y), np.amax(y), title, kms, price)
+    colplt2 = get_plot_colmap(x, y, z, xl, yl, zl, np.amin(x), np.amax(x), np.amin(y), np.amax(y), title, yyr, kms)
 
     data_colplt_prc, data_colplt_kms, data_colplt_pwr, data_colplt_yrs, data_colplt_brd = fetch_data_for_colplt_full()
 
@@ -89,11 +89,21 @@ def random_forest(params):
     title = 'Price distribution among brands'
     colplt3 = get_plot_colmap_categories(x, y, z, c, xl, yl, zl, 0.0, 300000.0, 0.0, 200000.0, title, kms, price)
 
-    mae, mape, pred_devaluations = build_devaluation_pred_data_set(brd)
+    mae, mape, pred_devaluations, prices_dev, power_dev, years_dev = build_devaluation_pred_data_set(brd)
 
-    distr_dev = get_plot_distr(pred_devaluations,  int(predict(brd, 1, pwr, dor, 0, 'predict_rf') - price), brd)
+    distr_dev = get_plot_distr(pred_devaluations, 'price devaluation (Euros)', 'Frequency', 'Distribution for brand ',
+                               int(predict(brd, 1, pwr, dor, 0, 'predict_rf') - price), brd)
 
-    return [price, mae, mape], prices, forecast, distr, colplt1, colplt2, colplt3, distr_dev
+    xl = 'price (Euros)'
+    yl = 'estimated price 0km (Euros)'
+    zl = 'power'
+    x = prices_dev
+    y = pred_devaluations + prices_dev
+    z = power_dev
+    title = 'predicted price-km0 vs price ' + str(brd).capitalize()
+    sctplt_dev = get_plot_colmap(x, y, z, xl, yl, zl, np.amin(x), np.amax(x), np.amin(y), np.amax(y), title, yyr, kms)
+
+    return [price, mae, mape], prices, forecast, distr, colplt1, colplt2, colplt3, distr_dev, sctplt_dev
 
 def get_query_data(query):
     connection = pymysql.connect(host=os.environ['DBHOST'],
@@ -121,7 +131,7 @@ def predict(brd, kms, pwr, dor, yyr, model):
     return price
 
 def build_devaluation_pred_data_set(brd):
-    output = get_query_data("select rd.price_c, pp.price_pred, pp.price_pred_if_new, pp.batch_ts " +
+    output = get_query_data("select rd.price_c, pp.price_pred, pp.price_pred_if_new, pp.batch_ts, rd.power, rd.kilometers " +
                             "from                                   " +
                             "    raw_data rd,                       " +
                             "    predicted_prices_random_forest pp " +
@@ -132,19 +142,26 @@ def build_devaluation_pred_data_set(brd):
     predictions = []
     values = []
     pred_devaluations = []
+    power = []
+    kilometers = []
+
     for i in output:
         prc = i[0]
         pred_prc = i[1]
         prc_new = i[2]
+        power.append(i[4])
+        kilometers.append(i[5])
         predictions.append(float(pred_prc))
         values.append(float(prc))
         pred_devaluations.append(int(prc_new - prc))
     predictions = np.array(predictions)
     values = np.array(values)
     pred_devaluations = np.array(pred_devaluations)
+    power = np.array(power)
+    kilometers= np.array(kilometers)
     mae = round(np.mean(abs(predictions - values)), 2)
     mape = round(np.mean(abs((predictions - values)/values * 100.0)), 2)
-    return mae, mape, pred_devaluations
+    return mae, mape, pred_devaluations, values, power, kilometers
 
 
 def fetch_data_for_distr(brand):
@@ -275,17 +292,17 @@ def get_plot_forecast(x, y, year, price):
     graph = urllib.parse.quote(string)
     return graph
 
-def get_plot_distr(data, price, brand):
+def get_plot_distr(data, xl, yl, title, price, brand):
     plt.close()
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 10))
     plt.tight_layout()
     fig, axs = plt.subplots(1, 1, figsize=(10, 10), tight_layout=True)
     axs.hist(data, bins=10, edgecolor='k', alpha=0.65)
-    plt.title('Price distribution for brand ' + str(brand))
+    plt.title(title + str(brand))
     plt.axvline(price, color='k', linestyle='dashed', linewidth=1)
-    plt.xlabel('Price devaluation predicted (Euros)')
-    plt.ylabel('Frequency')
+    plt.xlabel(xl)
+    plt.ylabel(yl)
     fig = plt.gcf()
     buf = BytesIO()
     fig.savefig(buf, format='png')

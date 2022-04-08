@@ -102,7 +102,7 @@ def results(request):
         "age": datetime.datetime.now().date().year - int(input_yyear)
         }
 
-    price_mae_mape, prices, chart1, chart2, chart3, chart4, chart5, chart6 = random_forest(input_parms)
+    price_mae_mape, prices, chart1, chart2, chart3, chart4, chart5, chart6, chart7 = random_forest(input_parms)
 
     return render(request, 'template_results.html',
                   {'ts': datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"),
@@ -116,4 +116,5 @@ def results(request):
                    'colplt1': chart3,
                    'colplt2': chart4,
                    'colplt3': chart5,
-                   'colplt4': chart6})
+                   'colplt4': chart6,
+                   'colplt5': chart7})
