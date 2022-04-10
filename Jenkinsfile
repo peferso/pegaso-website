@@ -29,6 +29,8 @@ pipeline {
                 cd src/pegaso_website
                 replace_cmd=s/#HOST#/*/g
                 sed -i "${replace_cmd}" settings.py
+                replace_cmd='s/DEBUG = True/DEBUG = False/g'
+                sed -i "${replace_cmd}" settings.py
                 cd ${OLDPWD}
                 '''
             }
